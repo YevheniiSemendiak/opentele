@@ -115,6 +115,9 @@ class MapData(BaseObject):  # nocov
         userSettingsKey = 0
         recentHashtagsAndBotsKey = 0
         exportSettingsKey = 0
+        installedCustomEmojiKey = 0
+        recentCustomEmojiKey = 0
+        archivedCustomEmojiKey = 0
 
         while not map.stream.atEnd():
             keyType = map.stream.readUInt32()
@@ -210,6 +213,11 @@ class MapData(BaseObject):  # nocov
                 recentMasksKey = map.stream.readUInt64()
                 archivedMasksKey = map.stream.readUInt64()
 
+            elif keyType == lskType.lskCustomEmojiKeys:
+                installedCustomEmojiKey = map.stream.readUInt64()
+                recentCustomEmojiKey = map.stream.readUInt64()
+                archivedCustomEmojiKey = map.stream.readUInt64()
+
             else:
                 logging.warning(f"Unknown key type in encrypted map: {keyType}")
 
@@ -239,6 +247,9 @@ class MapData(BaseObject):  # nocov
         self._recentHashtagsAndBotsKey = recentHashtagsAndBotsKey
         self._exportSettingsKey = exportSettingsKey
         self._oldMapVersion = mapData.version
+        self._installedCustomEmojiKey = installedCustomEmojiKey
+        self._recentCustomEmojiKey = recentCustomEmojiKey
+        self._archivedCustomEmojiKey = archivedCustomEmojiKey
 
     def prepareToWrite(self) -> td.Storage.EncryptedDescriptor:
         # Intended for internal usage only

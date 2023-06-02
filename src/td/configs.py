@@ -333,6 +333,7 @@ class lskType(int):  # nocov
     lskBackgroundOld = 0x14  # no data
     lskSelfSerialized = 0x15  # serialized self
     lskMasksKeys = 0x16  # no data
+    lskCustomEmojiKeys = 0x17 # no data
 
 
 class BotTrustFlag(int):  # nocov

@@ -1,4 +1,5 @@
 from __future__ import annotations
+import typing as t
 
 from .configs import *
 from . import shared as tl
@@ -624,7 +625,9 @@ class TelegramClient(telethon.TelegramClient, BaseObject):
 
                 # for the above reason, we should check if we're already authorized
                 if isinstance(qr_login._resp, types.auth.LoginTokenSuccess):
-                    newClient._on_login(qr_login._resp.authorization.user)
+                    coro_maybe = newClient._on_login(qr_login._resp.authorization.user)
+                    if isinstance(coro_maybe, t.Awaitable):
+                        await coro_maybe
                     break
 
                 # calculate when will the qr token expire
@@ -683,7 +686,9 @@ class TelegramClient(telethon.TelegramClient, BaseObject):
                     )
 
                     # successful log in
-                    newClient._on_login(result.user)  # type: ignore
+                    coro_maybe = newClient._on_login(result.user)
+                    if isinstance(coro_maybe, t.Awaitable):
+                        await coro_maybe
                     break
 
                 except PasswordHashInvalidError as e:
@@ -892,6 +897,8 @@ class TelegramClient(telethon.TelegramClient, BaseObject):
                 raise TypeError(
                     "The given session must be a str or a Session instance."
                 )
+            else:
+                auth_session = session
 
         auth_session.set_dc(endpoint.id, endpoint.ip, endpoint.port)  # type: ignore
         auth_session.auth_key = AuthKey(account.authKey.key)  # type: ignore
